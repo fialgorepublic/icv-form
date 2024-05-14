@@ -141,6 +141,7 @@ export default function Index({
         title,
         given_name,
         family_name,
+        middle_name,
         dob,
         international_student,
         gender,

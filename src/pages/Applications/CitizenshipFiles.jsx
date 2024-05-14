@@ -19,7 +19,10 @@ const CitizenshipFiles = ({ name, file }) => {
           component="div"
           sx={{ fontSize: "18px" }}
         >
-          <a href={`http://localhost:3000${file?.url}`} target="_blank">
+          <a
+            href={`${process.env.REACT_APP_BASE_URL}${file?.url}`}
+            target="_blank"
+          >
             {file?.filename}
           </a>
         </Typography>

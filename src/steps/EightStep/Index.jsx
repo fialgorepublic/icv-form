@@ -53,7 +53,7 @@ const Index = ({
 
   useEffect(() => {
     if (data) {
-      if (nextBtn) {
+      if (data?.student_handbook_declaration) {
         handleNextBtn(!nextBtn);
       }
       const { student_handbook_declaration } = data;
