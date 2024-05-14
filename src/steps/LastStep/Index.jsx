@@ -76,6 +76,7 @@ const Index = ({
         read_fee_structure,
         terms_and_condition,
         signature,
+        completed,
       } = data;
 
       setInitialValues({
@@ -87,6 +88,7 @@ const Index = ({
         read_fee_structure,
         terms_and_condition,
         signature,
+        completed,
       });
       // console.log('new dataa', initialValues)
       formik.setValues({
@@ -98,7 +100,7 @@ const Index = ({
         read_fee_structure,
         terms_and_condition,
         signature,
-        completed: true,
+        completed,
       });
     }
   }, [data]);
@@ -285,6 +287,14 @@ const Index = ({
                 </Box>
               </Grid>
             </Grid>
+            <input type="hidden" name="completed" value="true"></input>
+            <TextField
+              name="completed"
+              label="fasfsa"
+              value={formik.values.completed}
+              onChange={() => formik.setFieldValue("completed", true)}
+              type="hidden"
+            />
             <Grid container spacing={2} mt={4}>
               <Grid item xs={6}>
                 <Box component="section">

@@ -7,4 +7,5 @@ export const formInitialValues = {
   read_fee_structure: "",
   terms_and_condition: "",
   signature: "",
+  completed: "",
 };
