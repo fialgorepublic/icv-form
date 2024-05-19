@@ -47,7 +47,7 @@ const Index = ({
     console.log("values", values);
     axios
       .put(`${process.env.REACT_APP_BASE_URL}/api/v1/apply_details/${id}`, {
-        apply_detail: values,
+        apply_detail: {...values, completed: true},
       })
       .then(function (res) {
         localStorage.removeItem("data");
@@ -287,14 +287,7 @@ const Index = ({
                 </Box>
               </Grid>
             </Grid>
-            <input type="hidden" name="completed" value="true"></input>
-            <TextField
-              name="completed"
-              label="fasfsa"
-              value={formik.values.completed}
-              onChange={() => formik.setFieldValue("completed", true)}
-              type="hidden"
-            />
+
             <Grid container spacing={2} mt={4}>
               <Grid item xs={6}>
                 <Box component="section">
