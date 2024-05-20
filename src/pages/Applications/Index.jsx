@@ -1,6 +1,11 @@
 import * as React from "react";
 import PropTypes from "prop-types";
 import { useTheme } from "@mui/material/styles";
+import DeleteIcon from '@mui/icons-material/Delete';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import EditIcon from '@mui/icons-material/Edit';
+import DownloadIcon from '@mui/icons-material/Download';
+import dayjs from "dayjs";
 import {
   Container,
   TableCell,
@@ -52,6 +57,8 @@ function TablePaginationActions(props) {
     onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
   };
 
+  
+
   return (
     <Box sx={{ flexShrink: 0, ml: 2.5 }}>
       <IconButton
@@ -94,6 +101,9 @@ function TablePaginationActions(props) {
   );
 }
 
+const formatDate = (date) => {
+  return date ? dayjs(date).format("YYYY-MM-DD") : "";
+};
 TablePaginationActions.propTypes = {
   count: PropTypes.number.isRequired,
   onPageChange: PropTypes.func.isRequired,
@@ -220,6 +230,7 @@ export default function DataTable({ loader, setLoader }) {
                 <TableHead>
                   <TableRow>
                     <TableCell>Course</TableCell>
+                    <TableCell align="center">Date</TableCell>
                     <TableCell align="center">Given Name</TableCell>
                     <TableCell align="center">Mobile No</TableCell>
                     <TableCell align="center">Email</TableCell>
@@ -232,18 +243,21 @@ export default function DataTable({ loader, setLoader }) {
                       <TableCell component="th" scope="row">
                         {row?.course?.title}
                       </TableCell>
-                      <TableCell style={{ width: 50 }} align="right">
+                      <TableCell style={{ width: 150 }} align="center">
+                        {formatDate(row.created_at)}
+                      </TableCell>
+                      <TableCell style={{ width: 250 }} align="center">
                         {row.given_name}
                       </TableCell>
-                      <TableCell style={{ width: 50 }} align="right">
+                      <TableCell style={{ width: 150 }} align="center">
                         {row?.contacts_detail?.mobile_no}
                       </TableCell>
-                      <TableCell style={{ width: 50 }} align="right">
+                      <TableCell style={{ width: 150 }} align="right">
                         {row?.contacts_detail?.email}
                       </TableCell>
-                      <TableCell style={{ width: 490 }} align="right">
+                      <TableCell style={{ width: 290 }} align="center">
                         <Link to={`/user-applications/${row.id}`}>
-                          <Button
+                          {/* <Button
                             variant="contained"
                             color="success"
                             sx={{
@@ -254,10 +268,11 @@ export default function DataTable({ loader, setLoader }) {
                             }}
                           >
                             Show
-                          </Button>
+                          </Button> */}
+                          <VisibilityIcon sx={{ml: "20px"}}  variant="contained" color="success" />
                         </Link>
                         <Link to={`/user-applications/edit/${row.id}`}>
-                          <Button
+                          {/* <Button
                             variant="contained"
                             sx={{
                               ml: "5px",
@@ -267,9 +282,10 @@ export default function DataTable({ loader, setLoader }) {
                             }}
                           >
                             Edit
-                          </Button>
+                          </Button> */}
+                          <EditIcon variant="contained" sx={{ml: "20px"}} />
                         </Link>
-                        <Button
+                        {/* <Button
                           variant="contained"
                           color="error"
                           sx={{
@@ -281,9 +297,11 @@ export default function DataTable({ loader, setLoader }) {
                           onClick={() => handleDelete(row.id)}
                         >
                           Destroy
-                        </Button>
+                        </Button> */}
+                        <DeleteIcon sx={{ml: "20px"}} onClick={() => handleDelete(row.id)} color="error" variant="contained" />
+                        
                         <Link to={`/user-applications/download/${row.id}`}>
-                          <Button
+                          {/* <Button
                             variant="contained"
                             color="secondary"
                             sx={{
@@ -294,7 +312,8 @@ export default function DataTable({ loader, setLoader }) {
                             }}
                           >
                             Download PDF
-                          </Button>
+                          </Button> */}
+                          <DownloadIcon sx={{ml: "20px"}} variant="contained" color="secondary" />
                         </Link>
                       </TableCell>
                     </TableRow>

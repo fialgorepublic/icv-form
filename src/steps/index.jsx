@@ -45,7 +45,7 @@ const StepsContainer = () => {
 
   const steps = [
     {
-      name: "Step 1",
+      name: "Basic Information",
       component: (
         <FirstStep
           data={data}
@@ -57,7 +57,7 @@ const StepsContainer = () => {
       ),
     },
     {
-      name: "Step 2",
+      name: "Address Details",
       component: (
         <SecondStep
           data={data}
@@ -70,7 +70,7 @@ const StepsContainer = () => {
       ),
     },
     {
-      name: "Step 3",
+      name: "USI",
       component: (
         <ThirdStep
           data={data}
@@ -83,7 +83,7 @@ const StepsContainer = () => {
       ),
     },
     {
-      name: "Step 4",
+      name: "ID Check",
       component: (
         <FourthStep
           data={data}
@@ -96,7 +96,7 @@ const StepsContainer = () => {
       ),
     },
     {
-      name: "Step 5",
+      name: "Concession",
       component: (
         <FifthStep
           data={data}
@@ -109,7 +109,7 @@ const StepsContainer = () => {
       ),
     },
     {
-      name: "Step 6",
+      name: "GDCR",
       component: (
         <SixthStep
           data={data}
@@ -122,7 +122,7 @@ const StepsContainer = () => {
       ),
     },
     {
-      name: "Step 7",
+      name: "PTR",
       component: (
         <SeventhStep
           data={data}
@@ -135,7 +135,7 @@ const StepsContainer = () => {
       ),
     },
     {
-      name: "Step 8",
+      name: "Handbook",
       component: (
         <EightStep
           data={data}
@@ -148,7 +148,7 @@ const StepsContainer = () => {
       ),
     },
     {
-      name: "Step 9",
+      name: "Declaration",
       component: (
         <NineStep
           data={data}
@@ -161,7 +161,7 @@ const StepsContainer = () => {
       ),
     },
     {
-      name: "Step 10",
+      name: "CT/RPL",
       component: (
         <TenStep
           data={data}
@@ -174,7 +174,7 @@ const StepsContainer = () => {
       ),
     },
     {
-      name: "Step 11",
+      name: "Last Step",
       component: (
         <LastStep
           data={data}
