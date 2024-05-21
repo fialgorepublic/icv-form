@@ -1,122 +1,33 @@
-import * as React from "react";
-import PropTypes from "prop-types";
-import { useTheme } from "@mui/material/styles";
+import MUIDataTable from "mui-datatables";
+import { ThemeProvider } from "@mui/material/styles";
+import { createTheme } from "@mui/material/styles";
+import { CacheProvider } from "@emotion/react";
+import createCache from "@emotion/cache";
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DownloadIcon from '@mui/icons-material/Download';
-import dayjs from "dayjs";
-import {
-  Container,
-  TableCell,
-  TableBody,
-  Table,
-  Box,
-  TableContainer,
-  Typography,
-  TableHead,
-  Button,
-  CircularProgress,
-  Backdrop,
-  TableFooter,
-  TablePagination,
-  TableRow,
-  Paper,
-  IconButton,
-} from "@mui/material";
-
-import FirstPageIcon from "@mui/icons-material/FirstPage";
-import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
-import LastPageIcon from "@mui/icons-material/LastPage";
+import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
-
 import { useNavigate } from "react-router-dom";
-function TablePaginationActions(props) {
-  const theme = useTheme();
+import {
+  Container,
+  Box,
+  CircularProgress,
+  Backdrop,
 
-  const { count, page, rowsPerPage, onPageChange } = props;
+} from "@mui/material";
+import { styled } from "@mui/material";
+const muiCache = createCache({
+  key: "mui-datatables",
+  prepend: true
+});
 
-  const handleFirstPageButtonClick = (event) => {
-    onPageChange(event, 0);
-  };
-
-  const handleBackButtonClick = (event) => {
-    onPageChange(event, page - 1);
-  };
-
-  const handleNextButtonClick = (event) => {
-    console.log("Event", event);
-    onPageChange(event, page + 1);
-  };
-
-  const handleLastPageButtonClick = (event) => {
-    onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
-  };
-
-  
-
-  return (
-    <Box sx={{ flexShrink: 0, ml: 2.5 }}>
-      <IconButton
-        onClick={handleFirstPageButtonClick}
-        disabled={page === 0}
-        aria-label="first page"
-      >
-        {theme.direction === "rtl" ? <LastPageIcon /> : <FirstPageIcon />}
-      </IconButton>
-      <IconButton
-        onClick={handleBackButtonClick}
-        disabled={page === 0}
-        aria-label="previous page"
-      >
-        {theme.direction === "rtl" ? (
-          <KeyboardArrowRight />
-        ) : (
-          <KeyboardArrowLeft />
-        )}
-      </IconButton>
-      <IconButton
-        onClick={handleNextButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-        aria-label="next page"
-      >
-        {theme.direction === "rtl" ? (
-          <KeyboardArrowLeft />
-        ) : (
-          <KeyboardArrowRight />
-        )}
-      </IconButton>
-      <IconButton
-        onClick={handleLastPageButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-        aria-label="last page"
-      >
-        {theme.direction === "rtl" ? <FirstPageIcon /> : <LastPageIcon />}
-      </IconButton>
-    </Box>
-  );
-}
-
-const formatDate = (date) => {
-  return date ? dayjs(date).format("YYYY-MM-DD") : "";
-};
-TablePaginationActions.propTypes = {
-  count: PropTypes.number.isRequired,
-  onPageChange: PropTypes.func.isRequired,
-  page: PropTypes.number.isRequired,
-  rowsPerPage: PropTypes.number.isRequired,
-};
-
-export default function DataTable({ loader, setLoader }) {
-  const [page, setPage] = React.useState(1);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const navigate = useNavigate();
+export default function DataTable({loader, setLoader}) {
   const [applications, setApplications] = useState([]);
-  const [totalCount, setTotalCount] = useState(0);
+  const navigate = useNavigate();
   const handleDelete = (id) => {
     const token = localStorage.getItem("token");
     setLoader(true);
@@ -145,7 +56,6 @@ export default function DataTable({ loader, setLoader }) {
         console.log(error.config);
       });
   };
-
   useEffect(() => {
     const localStorageItems = ["data", "id", "currentAciveStep"];
     localStorageItems.forEach((k) => localStorage.removeItem(k));
@@ -157,7 +67,7 @@ export default function DataTable({ loader, setLoader }) {
     setLoader(true);
     axios
       .get(
-        `${process.env.REACT_APP_BASE_URL}/api/v1/apply_details?page=${page}&per_page=${rowsPerPage}`,
+        `${process.env.REACT_APP_BASE_URL}/api/v1/apply_details`,
         {
           headers: {
             Authorization: token,
@@ -166,196 +76,89 @@ export default function DataTable({ loader, setLoader }) {
       )
       .then(function (res) {
         setLoader(false);
+        // debugger
+        // debugger
         setApplications(res.data.data);
-        setTotalCount(res.data.total);
+        // setTotalCount(res.data.total);
       })
       .catch(function (error) {
+        // debugger
         toast.error(error.response.data);
         localStorage.removeItem("token");
         navigate("/");
         console.log("error asdfds", error);
       })
       .finally(function () {});
-  }, [page, rowsPerPage]);
-  console.log("Applications", applications);
-  // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - applications.length) : 0;
+  }, []);
+  const columns = [
+    {name: "Course",
+    options: {
+      filter: true,
+      sort: false,
+      style: {width: '12px'}
+     }
+     } ,
+    "Date",
+    "Given Name",
+    "Mobile Number",
+    "Email",
+    {
+    label: "Actions",
+    options: {
+        customBodyRender: (value, tableMeta, updateValue) => {
+            return (
+              <>
+              
+              <Link to={`/user-applications/${tableMeta.rowData[5]}`}>
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+                <VisibilityIcon sx={{ml: "10px"}}  variant="contained" color="success" />
+              </Link>
+                <Link to={`/user-applications/edit/${tableMeta.rowData[5]}`}>
+                <EditIcon variant="contained" sx={{ml: "10px"}} />
+                </Link>
+                <DeleteIcon sx={{ml: "10px"}} onClick={() => handleDelete(tableMeta.rowData[5])} color="error" variant="contained" />
+                <Link to={`/user-applications/download/${tableMeta.rowData[5]}`}>
+                <DownloadIcon sx={{ml: "10px"}} variant="contained" color="secondary" />
+                </Link>
+          </>
+            )
+        }
+    }
+  }
+  ];
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(1);
-  };
 
   return (
     <Container>
-      {loader && (
-        <Backdrop
-          sx={{
-            color: "#fff",
-            zIndex: (theme) => theme.zIndex.drawer + 1,
-          }}
-          open={open}
-        >
-          <CircularProgress />
-        </Backdrop>
-      )}
-      <Box
+    {loader && (
+      <Backdrop
         sx={{
-          border: "1px solid #E5EAF2",
-          borderRadius: "12px 12px 0 0",
-          mt: "60px",
+          color: "#fff",
+          zIndex: (theme) => theme.zIndex.drawer + 1,
         }}
+        open={open}
       >
-        <Typography
-          variant="h4"
-          color="inherit"
-          component="div"
-          sx={{ ml: "40px", mt: "40px" }}
-        >
-          LIST OF APPLIED STUDENT
-        </Typography>
-
-        <div style={{ margin: "40px" }}>
-          <div style={{ height: "auto", overflow: "scroll" }}>
-            <TableContainer component={Paper}>
-              <Table
-                sx={{ width: "100%" }}
-                aria-label="custom pagination table"
-              >
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Course</TableCell>
-                    <TableCell align="center">Date</TableCell>
-                    <TableCell align="center">Given Name</TableCell>
-                    <TableCell align="center">Mobile No</TableCell>
-                    <TableCell align="center">Email</TableCell>
-                    <TableCell align="center">Action</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {applications.map((row) => (
-                    <TableRow key={row.id}>
-                      <TableCell component="th" scope="row">
-                        {row?.course?.title}
-                      </TableCell>
-                      <TableCell style={{ width: 150 }} align="center">
-                        {formatDate(row.created_at)}
-                      </TableCell>
-                      <TableCell style={{ width: 250 }} align="center">
-                        {row.given_name}
-                      </TableCell>
-                      <TableCell style={{ width: 150 }} align="center">
-                        {row?.contacts_detail?.mobile_no}
-                      </TableCell>
-                      <TableCell style={{ width: 150 }} align="right">
-                        {row?.contacts_detail?.email}
-                      </TableCell>
-                      <TableCell style={{ width: 290 }} align="center">
-                        <Link to={`/user-applications/${row.id}`}>
-                          {/* <Button
-                            variant="contained"
-                            color="success"
-                            sx={{
-                              ml: "5px",
-                              fontSize: "16px",
-                              color: "#fff",
-                              textTransform: "capitalize",
-                            }}
-                          >
-                            Show
-                          </Button> */}
-                          <VisibilityIcon sx={{ml: "20px"}}  variant="contained" color="success" />
-                        </Link>
-                        <Link to={`/user-applications/edit/${row.id}`}>
-                          {/* <Button
-                            variant="contained"
-                            sx={{
-                              ml: "5px",
-                              fontSize: "16px",
-                              color: "#fff",
-                              textTransform: "capitalize",
-                            }}
-                          >
-                            Edit
-                          </Button> */}
-                          <EditIcon variant="contained" sx={{ml: "20px"}} />
-                        </Link>
-                        {/* <Button
-                          variant="contained"
-                          color="error"
-                          sx={{
-                            ml: "5px",
-                            fontSize: "16px",
-                            color: "#fff",
-                            textTransform: "capitalize",
-                          }}
-                          onClick={() => handleDelete(row.id)}
-                        >
-                          Destroy
-                        </Button> */}
-                        <DeleteIcon sx={{ml: "20px"}} onClick={() => handleDelete(row.id)} color="error" variant="contained" />
-                        
-                        <Link to={`/user-applications/download/${row.id}`}>
-                          {/* <Button
-                            variant="contained"
-                            color="secondary"
-                            sx={{
-                              ml: "5px",
-                              fontSize: "16px",
-                              color: "#fff",
-                              textTransform: "capitalize",
-                            }}
-                          >
-                            Download PDF
-                          </Button> */}
-                          <DownloadIcon sx={{ml: "20px"}} variant="contained" color="secondary" />
-                        </Link>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                  {/* {emptyRows > 0 && (
-                    <TableRow style={{ height: 1253 * emptyRows }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )} */}
-                </TableBody>
-                <TableFooter>
-                  <TableRow>
-                    <TablePagination
-                      rowsPerPageOptions={[
-                        5,
-                        10,
-                        25,
-                        { label: "All", value: totalCount },
-                      ]}
-                      colSpan={7}
-                      count={totalCount}
-                      rowsPerPage={rowsPerPage}
-                      page={page}
-                      slotProps={{
-                        select: {
-                          inputProps: {
-                            "aria-label": "rows per page",
-                          },
-                          native: true,
-                        },
-                      }}
-                      onPageChange={handleChangePage}
-                      onRowsPerPageChange={handleChangeRowsPerPage}
-                      ActionsComponent={TablePaginationActions}
-                    />
-                  </TableRow>
-                </TableFooter>
-              </Table>
-            </TableContainer>
-          </div>
-        </div>
-      </Box>
+        <CircularProgress />
+      </Backdrop>
+    )}
+    <Box
+      sx={{
+        border: "1px solid #E5EAF2",
+        borderRadius: "12px 12px 0 0",
+        mt: "60px",
+      }}
+    >
+    <CacheProvider value={muiCache}>
+      <ThemeProvider theme={createTheme()}>
+        <MUIDataTable
+          title={"LIST OF APPLIED STUDENT"}
+          data={applications}
+          columns={columns}
+        />
+      </ThemeProvider>
+    </CacheProvider>
+    </Box>
     </Container>
   );
 }
+
